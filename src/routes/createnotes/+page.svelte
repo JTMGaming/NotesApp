@@ -2,8 +2,9 @@
     <h2 class="note-title">Add new notes for courses</h2>
 
     <p class="note-label">Course:</p>
+    <button class="courses-button"></button>
 
-    <textarea name="Add notes" id="addnotes" class="note-textarea"></textarea>
+    <textarea name="Add notes" id="addnotes" class="note-textarea" style="resize: none;"></textarea>
 
     <button id="save" class="note-button">Save</button>
     <button class="note-button">Back</button>
@@ -40,6 +41,18 @@
     margin-bottom: 1em;
     padding: 0.5em;
     border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.courses-button{
+    background-color: #007BFF;
+    color: white;
+    padding: 0.5em;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 10px;
+    width: 100px;
     border-radius: 5px;
 }
 
