@@ -1,15 +1,13 @@
 <script>
-    let precourses = []
+    // @ts-nocheck
+    import FilterSelect from "../FilterSelect.svelte"
+    let noteCourses = [];
 
-    async function courseFecth() {
-		const res = await fetch("https://luentomuistiinpano-api.netlify.app/.netlify/functions/courses");
-		const data = await res.json();
-        console.log(data);
-		precourses = data;
+    let text = "";
 
-		return data;
-	}
-
+    function moreNotes(){
+        console.log(text);
+    }
 
 </script>
 
@@ -19,41 +17,15 @@
 <div class="note-container">
     <h2 class="note-title">Add new notes for courses</h2>
 
-    <div id="container">
-        <p id="text">Course:</p>
-        <section>
-            <select name="menu" id="menu" bind:value={precourses}>
-                <option disabled selected value="">Select a course</option>
-                <option value="all">All courses</option>
+    <FilterSelect />
 
-                {#await courseFecth()}
-                	<p>Loading data...</p>
-                {:then precourses}
-                    {#each precourses as precourse}
-                        <option value={precourse.id}>{precourse.name}</option>>
-                        {console.log(precourses)}
-                    {/each}
-                {:catch error}
-                	<p>{error.message}</p>
-                {/await}
-            </select>
-        </section>
-    </div>
+    <textarea bind:value={text} name="Add notes" id="addnotes" class="note-textarea" style="resize: none;"></textarea>
 
-    <textarea name="Add notes" id="addnotes" class="note-textarea" style="resize: none;"></textarea>
-
-    <button id="save" class="note-button">Save</button>
+    <button on:click={moreNotes} id="save" class="note-button">Save</button>
     <button class="note-button">Back</button>
 </div>
 
 <style>
-    #container{
-        display: grid;
-        grid-template-columns: auto auto;
-        align-items: center;
-        margin-bottom: 5vh;
-    }
-
     .note-container{
         display: flex;
         flex-direction: column;
@@ -73,10 +45,10 @@
         font-size: 1.5em;
     }
 
-    .note-label{
+    /* .note-label{
         margin-bottom: 0.5em;
         color: black;
-    }
+    } */
 
     .note-textarea{
         width: 100%;
@@ -87,7 +59,7 @@
         border-radius: 5px;
     }
 
-    .courses-button{
+    /* .courses-button{
         background-color: #007BFF;
         color: white;
         padding: 0.5em;
@@ -97,7 +69,7 @@
         margin-bottom: 10px;
         width: 100px;
         border-radius: 5px;
-    }
+    } */
 
     .note-button{
         width: 100px;

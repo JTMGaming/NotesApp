@@ -1,7 +1,7 @@
 <script>
     // @ts-nocheck
     import { notes } from "$lib/store.js"
-    import { courses } from "$lib/store.js";
+    import FilterSelect from "../FilterSelect.svelte"
 
     let localNotes = [];
     let LocalCourses = [];
@@ -16,38 +16,12 @@
         console.log("LocalNotes:", localNotes);
     });
 
-    courses.subscribe(value => {
-        // console.log("Subscribed value:", value);
-        LocalCourses = value;
-        // console.log("LocalCourses:", LocalCourses);
-    })
-
     $: {
         filteredNotes = currentid === "all" ? localNotes : localNotes.filter(note => note.course.id === currentid);
     }
 </script>
 
-
-
-
-<div id="container">
-    <p id="text">Course:</p>
-    <section>
-        <select name="menu" id="menu" bind:value={currentid}>
-            <option disabled selected value="">Select a course</option>
-            <option value="all">All courses</option>
-            {#if LocalCourses.length > 0}
-                {#each LocalCourses as result}
-                    <option value={result.id}>{result.name}</option>
-                    {console.log(currentid)}
-                    {console.log(filteredNotes)}
-                {/each}
-            {:else}
-                <option disabled selected value="">Loading courses...</option>
-            {/if}
-        </select>
-    </section>
-</div>
+<FilterSelect />
 
 
 {#if localNotes.length > 0}
@@ -66,29 +40,6 @@
 {/if}
 
 <style>
-    #container{
-        display: grid;
-        grid-template-columns: auto auto;
-        align-items: center;
-        margin-bottom: 5vh;
-    }
-
-    /* .courses-button{
-        background-color: #007BFF;
-        color: white;
-        padding: 0.5em;
-        font-size: 16px;
-        border: none;
-        cursor: pointer;
-        width: 100px;
-        border-radius: 5px;
-        margin-left: 10px;
-    } */
-
-    #text{
-        text-align: right;
-    }
-
     .allNotes{
         display: grid;
         border-radius: 10px;
