@@ -1,14 +1,17 @@
 <script>
-    let course = "";
-    let id = 0;
+    import { courses } from '$lib/store.js';
+    let courseName = "";
+
+    
 
 
     function addNotes(){
-        if(course.length <= 0){
+        if(courseName.length <= 0){
             alert("Please enter a course name");
         }
         else{
-            let notes = {course};
+            courses.add(courseName);
+            courseName = "";
         }
         
     }
@@ -17,7 +20,7 @@
 
 <div>
     <p>Add course</p>
-    <textarea bind:value={course} name="addcourse" id="addcourse" cols="30" rows="3" style="resize: none;"></textarea>
+    <textarea bind:value={courseName} name="addcourse" id="addcourse" cols="30" rows="3" style="resize: none;"></textarea>
 
     <button on:click={addNotes} class="courses-button">Add</button>
 </div>
