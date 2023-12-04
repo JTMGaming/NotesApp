@@ -1,29 +1,30 @@
 <script>
-    // @ts-ignore
-    let notes = [];
-    let results = [];
+    // @ts-nocheck
+    import { notes } from "$lib/store.js"
+    import { courses } from "$lib/store.js";
+
+    let localNotes = [];
+    let LocalCourses = [];
+    let filteredNotes = [];
+
     let currentid = "all";
+    
 
-    async function getNotes() {
-		const res = await fetch("https://luentomuistiinpano-api.netlify.app/.netlify/functions/notes");
-		const data = await res.json();
-        console.log(data);
-		notes = data;
+    notes.subscribe(value => {
+        //console.log("Subscribed value:", value);
+        localNotes = value;
+        console.log("LocalNotes:", localNotes);
+    });
 
-		return data;
-	}
-    // @ts-ignore
+    courses.subscribe(value => {
+        // console.log("Subscribed value:", value);
+        LocalCourses = value;
+        // console.log("LocalCourses:", LocalCourses);
+    })
 
-    function getFilter(){
-        results = notes.filter(
-            (thing, index, self) =>
-                index ===
-                self.findIndex((t) => t.course.id === thing.course.id)
-        );
+    $: {
+        filteredNotes = currentid === "all" ? localNotes : localNotes.filter(note => note.course.id === currentid);
     }
-
-    
-    
 </script>
 
 
@@ -35,36 +36,34 @@
         <select name="menu" id="menu" bind:value={currentid}>
             <option disabled selected value="">Select a course</option>
             <option value="all">All courses</option>
-
-            {#await getNotes()}
-            	<p>Loading data...</p>
-            {:then notes}
-                {getFilter()}
-                {#each results as result}
-                    <option value={result.course.id}>{result.course.name}</option>>
+            {#if LocalCourses.length > 0}
+                {#each LocalCourses as result}
+                    <option value={result.id}>{result.name}</option>
                     {console.log(currentid)}
+                    {console.log(filteredNotes)}
                 {/each}
-            {:catch error}
-            	<p>{error.message}</p>
-            {/await}
+            {:else}
+                <option disabled selected value="">Loading courses...</option>
+            {/if}
         </select>
     </section>
 </div>
 
 
-{#await getNotes()}
-	<p>Loading data...</p>
-{:then notes}
-    {#each (currentid === 'all' ? notes : notes.filter(note => note.course.id === currentid)) as note (note.id)}
-        <div class="allNotes">
-            <h2>{note.course.name}</h2>
-            <p>{note.text}</p>
-        </div>
-    {/each}
-{:catch error}
-	<p>{error.message}</p>
-{/await}
-
+{#if localNotes.length > 0}
+    {#if filteredNotes.length > 0}
+        {#each filteredNotes as note (note.id)}
+            <div class="allNotes">
+                <h2>{note.course.name}</h2>
+                <p>{note.text}</p>
+            </div>
+        {/each}
+    {:else}
+        <div>Notes not found</div>
+    {/if}
+{:else}
+    <div>Loading data...</div>
+{/if}
 
 <style>
     #container{
@@ -74,7 +73,7 @@
         margin-bottom: 5vh;
     }
 
-    .courses-button{
+    /* .courses-button{
         background-color: #007BFF;
         color: white;
         padding: 0.5em;
@@ -84,7 +83,7 @@
         width: 100px;
         border-radius: 5px;
         margin-left: 10px;
-    }
+    } */
 
     #text{
         text-align: right;
