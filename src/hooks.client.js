@@ -1,8 +1,16 @@
+// @ts-nocheck
 import { notes, courses } from "$lib/store.js";
 
 if (typeof window !== "undefined") {
 	const storedNotes = localStorage.getItem("notes");
 	const storedCourses = localStorage.getItem("courses");
+	let LocalNotes;
+
+	notes.subscribe((value) => {
+		//console.log("Subscribed value:", value);
+		LocalNotes = value;
+		console.log("LocalNotes:", LocalNotes);
+	});
 
 	if (!storedNotes) {
 		fetch("https://luentomuistiinpano-api.netlify.app/.netlify/functions/notes")

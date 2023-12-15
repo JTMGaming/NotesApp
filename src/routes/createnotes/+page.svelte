@@ -13,7 +13,10 @@
 	let localNotes = [];
 	let localCurrentId;
 	let localCourseName;
+	let sessionStart = false;
 
+	let sessionText = "";
+	let sessionId = "";
 	let text = "";
 
 	currentid.subscribe((value) => {
@@ -31,22 +34,27 @@
 	});
 
 	function moreNotes() {
-		console.log(text);
-		noteCourses = {
-			id: localNotes.length + 1,
-			text: text,
-			course: {
-				id: localCurrentId,
-				name: localCourseName
-			},
-			timestamp: new Date().toISOString()
-		};
-		console.log(noteCourses);
-		notes.update((n) => {
-			n.push(noteCourses);
-			return n;
-		});
-		localStorage.setItem("notes", JSON.stringify(localNotes));
+		sessionStart = true;
+		sessionId = localCurrentId;
+		sessionText += text;
+		sessionText += " ";
+		console.log(sessionText);
+
+		// noteCourses = {
+		// 	id: localNotes.length + 1,
+		// 	text: text,
+		// 	course: {
+		// 		id: localCurrentId,
+		// 		name: localCourseName
+		// 	},
+		// 	timestamp: new Date().toISOString()
+		// };
+		// console.log(noteCourses);
+		// notes.update((n) => {
+		// 	n.push(noteCourses);
+		// 	return n;
+		// });
+		// localStorage.setItem("notes", JSON.stringify(localNotes));
 
 		text = "";
 	}
@@ -55,7 +63,11 @@
 <div class="note-container">
 	<h2 class="note-title">Add new notes for courses</h2>
 
-	<FilterSelect />
+	{#if sessionStart == false}
+		<FilterSelect />
+	{:else}
+		<p>Current session: {currentCourseName}</p>
+	{/if}
 
 	<textarea
 		bind:value={text}
@@ -66,7 +78,7 @@
 	></textarea>
 
 	<button on:click={moreNotes} id="save" class="note-button">Save</button>
-	<button class="note-button">Back</button>
+	<button on:click={() => (sessionStart = false)} class="note-button">Back</button>
 </div>
 
 <style>

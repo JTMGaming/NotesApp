@@ -7,10 +7,10 @@
 	let LocalCourses = [];
 	let filteredNotes = [];
 
-	let localCurrentId;
+	let LocalCurrentId;
 
 	currentid.subscribe((value) => {
-		localCurrentId = value;
+		LocalCurrentId = value;
 	});
 
 	notes.subscribe((value) => {
@@ -19,11 +19,16 @@
 		console.log("LocalNotes:", localNotes);
 	});
 
+	function removeLine(id) {
+		localNotes = localNotes.filter((note) => note.id !== id);
+		localStorage.setItem("notes", JSON.stringify(localNotes));
+	}
+
 	$: {
 		filteredNotes =
-			localCurrentId === "all"
+			LocalCurrentId === "all"
 				? localNotes
-				: localNotes.filter((note) => note.course && note.course.id === localCurrentId);
+				: localNotes.filter((note) => note.course && note.course.id === LocalCurrentId);
 	}
 </script>
 
@@ -36,6 +41,8 @@
 				{#if note.course}
 					<h2>{note.course.name}</h2>
 					<p>{note.text}</p>
+					<p>{note.timestamp}</p>
+					<button on:click={() => removeLine(note.id)}>X</button>
 				{/if}
 			</div>
 		{/each}
@@ -43,7 +50,7 @@
 		<div>Notes not found</div>
 	{/if}
 {:else}
-	<div>Loading data...</div>
+	<div>Notes not found</div>
 {/if}
 
 <style>
@@ -52,9 +59,22 @@
 		border-radius: 10px;
 		border-style: solid;
 		margin-bottom: 10px;
+		grid-template-columns: 100fr 1fr;
 	}
 
-	.allNotes > * {
+	.allNotes p,
+	h2 {
 		margin-left: 1vw;
+		grid-column: 1;
+	}
+
+	button {
+		grid-row: 1 / span 1;
+		grid-column: 2;
+		width: 40px;
+		height: 40px;
+		border-radius: 100px;
+		background-color: red;
+		color: whitesmoke;
 	}
 </style>
