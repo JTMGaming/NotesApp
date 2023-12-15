@@ -3,18 +3,14 @@
 	import { notes, currentid, currentCourseName } from "$lib/store.js";
 	import FilterSelect from "../FilterSelect.svelte";
 
-	// let storedNotes = localStorage.getItem("notes");
-	// if (storedNotes) {
-	// 	localNotes = JSON.parse(storedNotes);
-	// 	notes.set(localNotes);
-	// }
-
 	let noteCourses = {};
 	let localNotes = [];
 	let localCurrentId;
 	let localCourseName;
 	let sessionStart = false;
 
+	let sessionNotes = [];
+	let sessionAfter = [];
 	let sessionText = "";
 	let sessionId = "";
 	let text = "";
@@ -34,39 +30,53 @@
 	});
 
 	function moreNotes() {
-		sessionStart = true;
-		sessionId = localCurrentId;
-		sessionText += text;
-		sessionText += " ";
-		console.log(sessionText);
+		if (text.length <= 0) {
+			window.alert("Please add text for the note");
+		} else {
+			sessionStart = true;
+			sessionId = localCurrentId;
+			sessionText += text;
+			sessionText += " ";
+			sessionAfter.push(text);
+			sessionNotes = [...sessionAfter];
+			console.log(sessionText);
 
-		// noteCourses = {
-		// 	id: localNotes.length + 1,
-		// 	text: text,
-		// 	course: {
-		// 		id: localCurrentId,
-		// 		name: localCourseName
-		// 	},
-		// 	timestamp: new Date().toISOString()
-		// };
-		// console.log(noteCourses);
-		// notes.update((n) => {
-		// 	n.push(noteCourses);
-		// 	return n;
-		// });
-		// localStorage.setItem("notes", JSON.stringify(localNotes));
+			text = "";
+		}
+	}
 
-		text = "";
+	function closeSession() {
+		if (!sessionStart) {
+			window.alert("There is no session started");
+		} else {
+			sessionStart = false;
+			noteCourses = {
+				id: localNotes.length + 1,
+				text: sessionText,
+				course: {
+					id: sessionId,
+					name: localCourseName
+				},
+				timestamp: new Date().toISOString()
+			};
+			console.log(noteCourses);
+			notes.update((n) => {
+				n.push(noteCourses);
+				return n;
+			});
+			localStorage.setItem("notes", JSON.stringify(localNotes));
+			sessionAfter = [];
+		}
 	}
 </script>
 
 <div class="note-container">
 	<h2 class="note-title">Add new notes for courses</h2>
 
-	{#if sessionStart == false}
+	{#if !sessionStart}
 		<FilterSelect />
 	{:else}
-		<p>Current session: {currentCourseName}</p>
+		<p>Current session: {localCourseName}</p>
 	{/if}
 
 	<textarea
@@ -78,7 +88,13 @@
 	></textarea>
 
 	<button on:click={moreNotes} id="save" class="note-button">Save</button>
-	<button on:click={() => (sessionStart = false)} class="note-button">Back</button>
+	<button on:click={closeSession} class="note-button">Back</button>
+
+	{#if sessionStart}
+		{#each sessionNotes as sf}
+			<p>{sf}</p>
+		{/each}
+	{/if}
 </div>
 
 <style>

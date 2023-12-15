@@ -4,6 +4,7 @@
 	let courseName = "";
 	let newCourse = {};
 	let LocalCourses;
+	let courseDetail = false;
 
 	courses.subscribe((value) => {
 		LocalCourses = value;
@@ -29,6 +30,7 @@
 			console.log(newCourse);
 
 			courseName = "";
+			courseDetail = true;
 		}
 	}
 </script>
@@ -45,6 +47,10 @@
 	></textarea>
 
 	<button on:click={addCourses} class="courses-button">Add</button>
+
+	{#if courseDetail}
+		<p>Course {newCourse.name} was added with id {newCourse.id}</p>
+	{/if}
 </div>
 
 <style>

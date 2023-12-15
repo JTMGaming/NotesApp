@@ -1,8 +1,14 @@
 <script>
 	//@ts-nocheck
 	import { courses, currentid, currentCourseName } from "$lib/store.js";
+	import { onMount } from "svelte";
+
 	let localCurrentId = "all";
 	let LocalCourses = [];
+
+	onMount(() => {
+		currentid.set("all");
+	});
 
 	courses.subscribe((value) => {
 		// console.log("Subscribed value:", value);

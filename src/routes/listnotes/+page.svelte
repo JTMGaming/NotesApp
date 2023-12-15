@@ -21,6 +21,7 @@
 
 	function removeLine(id) {
 		localNotes = localNotes.filter((note) => note.id !== id);
+		notes.set(localNotes);
 		localStorage.setItem("notes", JSON.stringify(localNotes));
 	}
 
