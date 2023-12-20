@@ -4,6 +4,7 @@ import { notes, courses } from "$lib/store.js";
 if (typeof window !== "undefined") {
 	const storedNotes = localStorage.getItem("notes");
 	const storedCourses = localStorage.getItem("courses");
+	console.log(storedNotes);
 	let LocalNotes;
 
 	notes.subscribe((value) => {
@@ -12,7 +13,7 @@ if (typeof window !== "undefined") {
 		console.log("LocalNotes:", LocalNotes);
 	});
 
-	if (!storedNotes) {
+	if (!storedNotes || LocalNotes.length === 0) {
 		fetch("https://luentomuistiinpano-api.netlify.app/.netlify/functions/notes")
 			.then((response) => response.json())
 			.then((data) => {
